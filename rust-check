@@ -2,10 +2,23 @@
 set -euo pipefail
 
 this_dir=$(cd $(dirname $0); pwd -P)
+current_dir=$(pwd)
 
-cd $this_dir
+if [ ! -f $current_dir/Cargo.toml ]; then
+  echo 'This is not a Cargo project directory.'
+  exit 1
+fi
+
+# rustup component add rustfmt
+cargo fmt
+
 cargo build
 cargo build --release
 cargo test
 cargo test --release
+
+# rustup component add clippy
 cargo clippy --all-targets --all-features -- -D warnings
+
+# cargo install --git https://github.com/hhatto/cargo-strict.git
+cargo strict
